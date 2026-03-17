@@ -1,4 +1,5 @@
 export enum userRoleEnum {
-    OPS = "OPS",
-    FINANCE = "FINANCE",
+    VISITOR = "VISITOR",
+    USER = "USER",
+    ADMIN = "ADMIN"
 }

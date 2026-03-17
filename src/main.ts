@@ -17,8 +17,8 @@ async function bootstrap() {
   app.enableCors();
 
   const Swagger = new DocumentBuilder()
-    .setTitle("practical_server")
-    .setDescription("new practical_server for the backend")
+    .setTitle("Pet Practical Server")
+    .setDescription("pet practical server integrated API solution for managing pet data and user ecosystems.")
     .setVersion("1.0.0")
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
@@ -28,7 +28,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, Swagger);
-  SwaggerModule.setup('practical_server', app, document);
+  SwaggerModule.setup('pet_practical_server', app, document);
 
   app.useGlobalFilters(new CommonExceptionFilter());
 

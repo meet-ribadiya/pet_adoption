@@ -15,17 +15,26 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: e.Request, payload: any, done: VerifiedCallback) {
-    if (req.url.includes('vendor')) {
-      if (payload.roles == 'FINANCE') {
-        return { id: payload.id, email: payload.email };
-      } else {
-        return done(
-          new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED),
-          false,
-        );
+    const url = req.url;
+
+    const routeRoleMap = [
+      { path: 'admin', role: 'ADMIN' },
+      { path: 'user', role: 'USER' },
+    ];
+
+    for (const route of routeRoleMap) {
+      if (url.includes(route.path)) {
+        if (payload.roles === route.role) {
+          return { id: payload.id, email: payload.email };
+        } else {
+          return done(
+            new HttpException(`Unauthorized ${route.role} access`, HttpStatus.UNAUTHORIZED),
+            false,
+          );
+        }
       }
-    } else {
-      return { email: payload.email, id: payload.id };
     }
+
+    return { id: payload.id, email: payload.email };
   }
 }
