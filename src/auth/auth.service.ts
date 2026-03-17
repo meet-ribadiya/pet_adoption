@@ -13,9 +13,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async createAccount(email, password, roles) {
+  async createAccount(email, password, phoneNumber) {
     const existingUser = await this.userModel.findOne({ email });
-    console.log("🚀 ~ AuthService ~ createAccount ~ email:", email)
     if (existingUser) {
       return {
         status: HttpStatus.BAD_REQUEST,
@@ -28,9 +27,9 @@ export class AuthService {
     const userData = await this.userModel.create({
       email,
       password: hashedPassword,
-      roles: roles
+      roles: userRoleEnum.ADMIN,
+      phoneNumber: phoneNumber
     });
-      console.log("🚀 ~ AuthService ~ createAccount ~ email:", email)
 
     return {
       status: HttpStatus.CREATED,
@@ -38,6 +37,7 @@ export class AuthService {
       data: {
         userId: userData._id,
         email: userData.email,
+        phoneNumber: userData.phoneNumber
       },
     };
   }
@@ -79,9 +79,38 @@ export class AuthService {
         access_token,
         userId: user._id,
         email: user.email,
-        role:user.roles
+        role: user.roles,
+        phoneNumber: user.phoneNumber
       }
     };
   }
 
+  async registerUser(email, password, phoneNumber) {
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'User already exists',
+      };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const userData = await this.userModel.create({
+      email,
+      password: hashedPassword,
+      roles: userRoleEnum.USER,
+      phoneNumber: phoneNumber
+    });
+
+    return {
+      status: HttpStatus.CREATED,
+      message: 'User registered successfully',
+      data: {
+        userId: userData._id,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber
+      },
+    };
+  }
 }

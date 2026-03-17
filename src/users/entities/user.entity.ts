@@ -19,6 +19,9 @@ export class User {
     password: string;
 
     @Prop()
+    phoneNumber: string;
+    
+    @Prop()
     roles: userRoleEnum;
 
     @Prop({ default: customTimestamp })
