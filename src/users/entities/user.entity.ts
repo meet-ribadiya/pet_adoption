@@ -20,8 +20,8 @@ export class User {
 
     @Prop()
     phoneNumber: string;
-    
-    @Prop()
+
+    @Prop({ default: userRoleEnum.USER })
     roles: userRoleEnum;
 
     @Prop({ default: customTimestamp })

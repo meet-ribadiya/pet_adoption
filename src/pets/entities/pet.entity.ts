@@ -30,7 +30,7 @@ export class Pet {
     @Prop()
     imageUrl: string;
 
-    @Prop()
+    @Prop({ default: petStatusEnum.AVAILABLE })
     status: petStatusEnum;
 
     @Prop({ default: customTimestamp })

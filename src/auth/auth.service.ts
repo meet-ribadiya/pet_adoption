@@ -25,7 +25,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const userData = await this.userModel.create({
-      email,
+      email: email,
       password: hashedPassword,
       roles: userRoleEnum.ADMIN,
       phoneNumber: phoneNumber
@@ -97,7 +97,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const userData = await this.userModel.create({
-      email,
+      email: email,
       password: hashedPassword,
       roles: userRoleEnum.USER,
       phoneNumber: phoneNumber
