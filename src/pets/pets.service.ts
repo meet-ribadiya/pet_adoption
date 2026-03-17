@@ -6,12 +6,15 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/users/entities/user.entity';
+import { petStatusEnum } from 'src/constant/pet-status';
+import { Adoption, AdoptionDocument } from 'src/adoption/entities/adoption.entity';
 
 @Injectable()
 export class PetsService {
   constructor(
     @InjectModel(Pet.name) private petModel: Model<PetDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Adoption.name) private adoptionModel: Model<AdoptionDocument>,
     private jwtService: JwtService,
   ) { }
 
@@ -28,7 +31,7 @@ export class PetsService {
   async findAllPets(filterPetDto: FilterPetDto) {
     const skip = (filterPetDto.pageNumber - 1) * filterPetDto.pageLimit;
 
-    let filter: Record<string, any> = { status: 'AVAILABLE' };
+    let filter: Record<string, any> = { status: petStatusEnum.AVAILABLE };
 
     if (filterPetDto.search) {
       const searchRegex = new RegExp(filterPetDto.search.trim(), 'i');
@@ -75,7 +78,7 @@ export class PetsService {
   async findOnePet(id) {
     const data = await this.petModel.findOne({
       _id: id,
-      status: 'AVAILABLE',
+      status: petStatusEnum.AVAILABLE,
     }).lean();
 
     if (!data) {
@@ -118,6 +121,8 @@ export class PetsService {
       };
     }
 
+    await this.adoptionModel.deleteMany({ petId: id });
+
     return {
       status: HttpStatus.OK,
       message: "Pet removed successfully",
@@ -125,10 +130,33 @@ export class PetsService {
     };
   }
 
+  async findAdoptedPets(pageNumber: number, pageLimit: number) {
+    const skip = (pageNumber - 1) * pageLimit;
+
+    const pets = await this.petModel
+      .find({ status: petStatusEnum.ADOPTED })
+      .skip(skip)
+      .limit(pageLimit + 1)
+      .lean();
+
+    const isNextPageAvailable = pets.length > pageLimit;
+
+    if (isNextPageAvailable) {
+      pets.pop();
+    }
+
+    return {
+      status: HttpStatus.OK,
+      message: "Adopted pets retrieved successfully",
+      isNextPageAvailable,
+      data: pets
+    };
+  }
+
   async filterPetsValues() {
     const result = await this.petModel.aggregate([
       {
-        $match: { status: 'AVAILABLE' },
+        $match: { status: petStatusEnum.AVAILABLE },
       },
       {
         $group: {

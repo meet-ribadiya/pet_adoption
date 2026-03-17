@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req } from '@nestjs/common';
 import { AdoptionService } from './adoption.service';
 import { CreateAdoptionDto } from './dto/create-adoption.dto';
 import { UpdateAdoptionDto } from './dto/update-adoption.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/lib/jwt-auth.guard';
 
 
@@ -12,28 +12,53 @@ import { JwtAuthGuard } from 'src/auth/lib/jwt-auth.guard';
 export class AdoptionController {
   constructor(private readonly adoptionService: AdoptionService) { }
 
-  @Post()
-  create(@Body() createAdoptionDto: CreateAdoptionDto) {
-    return this.adoptionService.create(createAdoptionDto);
+  @ApiOperation({ summary: 'Create adoption request (User)' })
+  @Post('create')
+  create(
+    @Req() request,
+    @Body() createAdoptionDto: CreateAdoptionDto,
+  ) {
+    return this.adoptionService.create(request, createAdoptionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.adoptionService.findAll();
+
+  @ApiOperation({ summary: 'Get all adoption requests (Admin)' })
+  @Get('find-all/admin')
+  findAll(
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageLimit') pageLimit: number
+  ) {
+    return this.adoptionService.findAll(pageNumber, pageLimit);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adoptionService.findOne(+id);
+
+  @ApiOperation({ summary: 'Get adoption request by ID' })
+  @Get('find-one')
+  findOne(
+    @Req() request,
+    @Query('id') id: string
+  ) {
+    return this.adoptionService.findOne(request, id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdoptionDto: UpdateAdoptionDto) {
-    return this.adoptionService.update(+id, updateAdoptionDto);
+
+  @ApiOperation({ summary: 'Get logged-in user adoption requests (User - own only)' })
+  @Get('/my-adoptions')
+  findMyAdoptions(
+    @Req() request,
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageLimit') pageLimit: number
+  ) {
+    return this.adoptionService.findAllByUserId(request, pageNumber, pageLimit);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adoptionService.remove(+id);
+
+  @ApiOperation({ summary: 'Update adoption status (Admin only)' })
+  @Patch('update-status/admin')
+  update(
+    @Body() updateAdoptionDto: UpdateAdoptionDto,
+  ) {
+    return this.adoptionService.update(updateAdoptionDto);
   }
+
 }

@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateAdoptionDto } from './create-adoption.dto';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { adoptionStatusEnum } from 'src/constant/adoption-status';
 
-export class UpdateAdoptionDto extends PartialType(CreateAdoptionDto) {}
+export class UpdateAdoptionDto {
+    @ApiProperty()
+    id: string;
+
+    @ApiProperty({ required: true, enum: adoptionStatusEnum, default: adoptionStatusEnum.APPROVED })
+    status: adoptionStatusEnum;
+
+}

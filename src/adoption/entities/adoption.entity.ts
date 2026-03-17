@@ -18,7 +18,7 @@ export class Adoption {
     @Prop()
     petId: string;
 
-    @Prop()
+    @Prop({ enum: adoptionStatusEnum, default: adoptionStatusEnum.PENDING })
     status: adoptionStatusEnum;
 
     @Prop()

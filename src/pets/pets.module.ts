@@ -5,11 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Pet, PetSchema } from './entities/pet.entity';
 import { User, UserSchema } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { Adoption, AdoptionSchema } from 'src/adoption/entities/adoption.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Pet.name, schema: PetSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Adoption.name, schema: AdoptionSchema }]),
 
   ],
   controllers: [PetsController],

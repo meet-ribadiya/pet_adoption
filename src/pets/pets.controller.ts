@@ -44,6 +44,16 @@ export class PetsController {
     return this.petsService.removePet(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: "find adopated pets (Admin only)" })
+  @Get('find-adopted/admin')
+  findAdoptedPets(
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageLimit') pageLimit: number
+  ) {
+    return this.petsService.findAdoptedPets(pageNumber, pageLimit);
+  }
+
   @ApiOperation({ summary: 'Get distinct values for species and breed for filtering' })
   @Get('filter-values')
   filterPetsValues() {
