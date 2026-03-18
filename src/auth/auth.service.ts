@@ -103,10 +103,22 @@ export class AuthService {
       phoneNumber: phoneNumber
     });
 
+    const payload = {
+      id: userData._id,
+      userEmail: userData.email,
+      roles: userData.roles
+    };
+
+    const access_token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '24h',
+    });
+
     return {
       status: HttpStatus.CREATED,
       message: 'User registered successfully',
       data: {
+        access_token,
         userId: userData._id,
         email: userData.email,
         phoneNumber: userData.phoneNumber

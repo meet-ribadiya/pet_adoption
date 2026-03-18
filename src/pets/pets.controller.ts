@@ -1,4 +1,4 @@
-import { Controller, Req, Get, Post, Query, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Req, Get, Post, Query, Body, Patch, Delete, UseGuards } from '@nestjs/common';
 import { PetsService } from './pets.service';
 import { CreatePetDto, FilterPetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
@@ -6,7 +6,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/lib/jwt-auth.guard';
 
 @ApiTags('Pets')
-// @UseGuards(JwtAuthGuard)
 @Controller('pets')
 export class PetsController {
   constructor(private readonly petsService: PetsService) { }

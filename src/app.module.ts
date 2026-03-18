@@ -11,7 +11,7 @@ import { AdoptionModule } from './adoption/adoption.module';
 @Module({
   imports: [
      ConfigModule.forRoot({
-      isGlobal: true, // This makes it available everywhere
+      isGlobal: true, 
       envFilePath: '.env',
      }),
     MongooseModule.forRoot(process.env.DATABASE_URL),
